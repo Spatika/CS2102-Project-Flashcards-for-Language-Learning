@@ -1,7 +1,11 @@
 body {
   padding-top: 40px;
   padding-bottom: 40px;
-  background-color: #eee;
+  background-image: url('http://www.hdwallpaperscool.com/wp-content/uploads/2013/12/hd-wallpapers-prague-city-cool-desktop-photographs-widescreen.jpg');
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size:cover;
 }
 
 .form-signin {
@@ -37,4 +41,12 @@ body {
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+}
+
+.padded-top-10 {
+  padding-top: 10%;
+}
+
+.white-text {
+  color: white;
 }
