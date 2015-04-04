@@ -9,7 +9,7 @@ def index(request):
 	context = RequestContext(request, {})
 	return HttpResponse(template.render(context))
 
-def create_set(request):
+def set_create(request):
 	data = json.loads(request.body)
 	user_set_data = data['set']
 	user_set = Set(user=User.objects.get(pk=user_set_data['user']), 
