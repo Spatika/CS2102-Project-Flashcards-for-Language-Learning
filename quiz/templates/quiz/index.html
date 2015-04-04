@@ -37,23 +37,8 @@
 
         <button id = "signup" class="btn btn-lg btn-default btn-block" type="submit">Sign up</button>
       </form>
-
     </div> <!-- /container -->
 
   </body>
-  <script type="text/javascript">
-
-  $( "#signin" )
-      .button()
-      .click(function( event ) {
-        console.log("In button event");
-        var j = JSON.stringify("French");
-        console.log(j);
-            $.post("/quiz/search/",
-                 j, function(data){
-                   console.log(data);
-            });
-      });
-  </script>
 </html>
 
