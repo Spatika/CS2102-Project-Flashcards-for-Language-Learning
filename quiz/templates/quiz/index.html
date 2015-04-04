@@ -15,7 +15,8 @@
     {# Loading CSS #}
     <link href="{% static 'quiz/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'quiz/css/signin.css' %}" rel="stylesheet">
-
+    <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="http://code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
   </head>
   <body>
 
@@ -40,4 +41,19 @@
     </div> <!-- /container -->
 
   </body>
+  <script type="text/javascript">
+
+  $( "#signin" )
+      .button()
+      .click(function( event ) {
+        console.log("In button event");
+        var j = JSON.stringify("French");
+        console.log(j);
+            $.post("/quiz/search/",
+                 j, function(data){
+                   console.log(data);
+            });
+      });
+  </script>
 </html>
+

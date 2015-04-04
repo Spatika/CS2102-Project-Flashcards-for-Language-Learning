@@ -3,17 +3,19 @@ from django.http import HttpResponse
 from django.template import RequestContext, loader
 from django.db.models import Q
 from quiz.models import *
-# from django.utils import simplejson
-
-# def index(request):
-# 	template = loader.get_template('quiz/index.html')
-# 	context = RequestContext(request, {})
-# 	return HttpResponse(template.render(context))
+import json
 
 def index(request):
-	# decode_json = simplejson.loads(request.body)
-	decode_json = 'French'
-	sets = Set.objects.get(
+	template = loader.get_template('quiz/index.html')
+	context = RequestContext(request, {})
+	return HttpResponse(template.render(context))
+
+def search(request):
+	decode_json = json.loads(request.body)
+	print(decode_json)
+	# decode_json = 'German'
+	template = loader.get_template('quiz/index.html')
+	sets = Set.objects.filter(
 		Q(title__contains=decode_json)|
 		Q(description__contains=decode_json)|
 		Q(language_from__name__contains=decode_json)|
