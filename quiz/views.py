@@ -16,18 +16,20 @@ def index(request):
 def login_user(request):
 	context = {}
 	context.update(csrf(request))
-	username = password = ''
+	username = password = state = ''
 	# This is when submit is already clicked once
 	if request.POST:
 		username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(username=username, password=password)
-        state = 'not logged in'
+        # Actual authenticated user
         if user is not None:
+			# Successful login scenario
 			login(request, user)
 			state = "You're successfully logged in!"
-	return render(request, 'quiz/dashboard.html' ,{'state':state, 'username': username, 'password': password})
-
+			return render(request, 'quiz/dashboard.html' ,{'state':state, 'username': username, 'password': password})
+	state="Invalid login credentials"
+	return render(request, 'quiz/index.html', {'state': state})
 
 def signup_user(request):
 	context = {}
@@ -42,4 +44,5 @@ def signup_user(request):
         user.save()
         authenticate(username=username, password=password)
         login(request, user)
+        state = "New user created successfully"
 	return render(request, 'quiz/dashboard.html' ,{'state':state, 'username': username, 'password': password})

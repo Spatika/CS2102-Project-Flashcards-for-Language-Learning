@@ -22,7 +22,6 @@
 
     <div class="container">
       <h1> {{ state }} </h1>
-      <h2> {{ username }} </h2>
       <form id="sign-form" class="form-signin padded-top-10" onsubmit="return submitForm();" method="post">
         {% csrf_token %}
         <h2 class="form-signin-heading">Welcome to Quizlet!</h2>
