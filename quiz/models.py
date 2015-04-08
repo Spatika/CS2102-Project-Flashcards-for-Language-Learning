@@ -1,12 +1,13 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # User for membership
-class User(models.Model):
-	email = models.CharField(max_length=256, primary_key=True, null=False)
-	name = models.CharField(max_length=256, null=False)
-	password = models.CharField(max_length=128, null=False)
-	def __str__(self):
-		return self.email + "|" + self.name
+# class User(models.Model):
+# 	email = models.CharField(max_length=256, primary_key=True, null=False)
+# 	name = models.CharField(max_length=256, null=False)
+# 	password = models.CharField(max_length=128, null=False)
+# 	def __str__(self):
+# 		return self.email + "|" + self.name
 
 # We might decide to drop this later if deemed superfluous
 class Language(models.Model):
