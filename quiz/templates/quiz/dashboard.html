@@ -65,12 +65,25 @@
 		  </div><!-- /.container-fluid -->
 		</nav>
 		<div class="container">
-			<h2> Welcome, {{ username }}</h2>
-			{% for set in sets %}
-			<div>
-				{{ set }}
-			</div>
-			{% endfor %}
+			<h2 class="padded-10"> Welcome, {{ username }}</h2>
+			{% if number_of_sets > 0 %}
+				<h3 class="padded-10"> Your Sets: </h3>
+				<div class="row">
+					{% for set in sets %}
+					<div class="col-md-3">
+						<div class="set">
+							<h5>{{ set.description }}</h5>
+							<p> <b>Language to:</b> {{ set.language_to }}</p>
+							<p> <b>Language from:</b> {{ set.language_from }} </p>
+						</div>
+					</div>
+					{% endfor %}
+				</div>
+			{% else %}
+				<div class="Jumbotron">
+					<h3>You have not created any sets yet</h3>
+				</div>
+			{% endif %}
 		</div>
    </body>
 </html>

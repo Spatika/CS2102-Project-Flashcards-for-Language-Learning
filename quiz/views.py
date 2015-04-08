@@ -31,7 +31,7 @@ def login_user(request):
 			user_name = username
 			user_id = User.objects.filter(username=username)
 			sets = Set.objects.filter(user=user_id)
-			return render(request, 'quiz/dashboard.html' ,{'state':state, 'username': username, 'password': password, 'sets': sets})
+			return render(request, 'quiz/dashboard.html' ,{'state':state, 'username': username, 'password': password, 'sets': sets, 'number_of_sets': len(sets)})
 	state="Invalid login credentials"
 	return render(request, 'quiz/index.html', {'state': state})
 

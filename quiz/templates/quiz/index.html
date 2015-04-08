@@ -24,7 +24,7 @@
       <h1> {{ state }} </h1>
       <form id="sign-form" class="form-signin padded-top-10" onsubmit="return submitForm();" method="post">
         {% csrf_token %}
-        <h2 class="form-signin-heading">Welcome to Quizlet!</h2>
+        <h2 class="form-signin-heading" id="linguistic-heading">Welcome to Linguistic</h2>
         <label for="inputEmail" class="sr-only">Email address</label>
         <input id="inputEmail" class="form-control" placeholder="Email address"  name="username" id="username"required autofocus>
         <label for="inputPassword" class="sr-only">Password</label>

@@ -51,3 +51,7 @@ body {
 .white-text {
   color: white;
 }
+
+#linguistic-heading {
+  width: 500px;
+}
