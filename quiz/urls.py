@@ -8,5 +8,6 @@ urlpatterns = patterns('',
     url(r'^debug/','quiz.views.debug_view'),
     url(r'^user/$', views.userPage, name='user'),
     url(r'^search/$', views.search, name='search'),
-    url(r'^set/create/', views.set_create, name='set_create'),
+    url(r'^createSet/', views.set_create, name='quiz.views.set_create'),
+    url(r'^createSetForm/', views.create_set_form, name='quiz.views.create_set_form'),
 )
