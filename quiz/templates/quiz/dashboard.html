@@ -28,11 +28,11 @@
 					{% for set in sets %}
 
 					<div class="col-md-3">
-						
+
 						<a href={% url 'quiz.views.edit_set_form' set.id %}>Edit</a>
 
 						<div class="set">
-							<form id = "form1" class="viewset" role = "view" action="/set/view/{{set.id}}" method ="POST">
+							<form id = "form1" class="viewset" role = "view" action="/set/view/{{set.id}}/" method ="POST">
 							{%csrf_token %}
 
 							<input type="hidden" name="random" value="1"/>
