@@ -10,6 +10,6 @@ urlpatterns = patterns('',
 
     # url(r'^user/(?P<user_id>\d+)/$', views.users, name='account'),
     url(r'^search/$', views.search, name='search'),
-    # url(r'^search/(?P<user_name>[\w\s.])/$', views.search, name='search'),
+    # url(r'^search/(?P<user_name>[\w\s.])/$', views.search2, name='search'),
     url(r'^set/create/', views.set_create, name='set_create'),
 )

@@ -64,27 +64,27 @@ def userPage(request):
 	context = RequestContext(request, {})
 	return HttpResponse(template.render(context))
 
-# def search(request,user_name):
+
 def search(request):
-	print("In search")
-	template = loader.get_template('quiz/userPage.html')
+	print(request.user)
+	template = loader.get_template('quiz/dashboard.html')
 	if request.POST:
 		decode_json = request.POST.get('srch-term')
-		user_sets = Set.objects.filter(
+		sets = Set.objects.filter(
 			Q(title__contains=decode_json)|
 			Q(description__contains=decode_json)|
 			Q(language_from__name__contains=decode_json)|
 			Q(language_to__name__contains=decode_json)
-			).filter(user__username='supraja')
-		print(user_sets)
+			).filter(user__username=request.user)
+		print(sets)
 		other_sets = Set.objects.filter(
 			Q(title__contains=decode_json)|
 			Q(description__contains=decode_json)|
 			Q(language_from__name__contains=decode_json)|
 			Q(language_to__name__contains=decode_json)
-			).filter(~Q(user__username='supraja'))
+			).filter(~Q(user__username=request.user))
 		print(other_sets)
-		context = {'UserSets':user_sets, 'OtherSets':other_sets}
+		context = {'sets': sets, 'number_of_sets': len(sets), 'OtherSets':other_sets, 'number_of_others': len(other_sets), 'username': request.user}
 	return HttpResponse(template.render(context))
 
 def set_create(request):
