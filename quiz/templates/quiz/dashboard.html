@@ -51,9 +51,10 @@
 		          </ul>
 		        </li>
 		      </ul>
-		      <form class="navbar-form navbar-left" role="search">
+		      <form class="navbar-form navbar-left" role="search" action="/quiz/search/" method="POST">
+		        {% csrf_token %}
 		        <div class="form-group navbar-link">
-		          <input type="text" class="form-control" placeholder="Search">
+		          <input type="text" class="form-control" placeholder="Search" name="srch-term" id="srch-term">
 		        </div>
 		      </form>
 		      <a href="#"><span class="glyphicon glyphicon-search glyph-style search-glyph"></span></a>
