@@ -47,11 +47,21 @@
 					{% for oset in OtherSets %}
 					<div class="col-md-3">
 						<div class="set">
+<<<<<<< HEAD
+							<h5>{{ set.title }}</h5>
+							<form class="deleteSet" role="delete"  action="/delete/{{oset.id}}" method="POST">
+							{% csrf_token %}
+							 <div class="input-group-btn">
+								<button class="btn btn-default" type="submit">Delete</button>
+							</div>
+							
+=======
 							<h5>{{ oset.title }}</h5> 
 							<form role="add"  action="/add/{{oset.id}}/" method="POST">
 								{% csrf_token %}
 							 <button class="btn btn-default" type="submit">Add</button>
 							</form>
+>>>>>>> e0e7b024c3af82d684fa3685a4679d81f00b2910
 							<h5>{{ oset.description }}</h5>
 							<p> <b>Language to:</b> {{ oset.language_to }}</p>
 							<p> <b>Language from:</b> {{ oset.language_from }} </p>
