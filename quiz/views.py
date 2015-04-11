@@ -94,7 +94,7 @@ def addSet(request, set_id):
 	context.update(csrf(request))
 	username = password = state = ''
 	state = "Invalid login credentials"
-	return render(request, 'quiz/index.html', {'state': state})
+	return search(request)
 
 def set_create(request):
 	data = json.loads(request.body)
