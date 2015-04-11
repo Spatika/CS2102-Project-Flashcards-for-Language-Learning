@@ -10,4 +10,6 @@ urlpatterns = patterns('',
     url(r'^search/$', views.search, name='search'),
     url(r'^createSet/', views.set_create, name='quiz.views.set_create'),
     url(r'^createSetForm/', views.create_set_form, name='quiz.views.create_set_form'),
+    url(r'^set/create/', views.set_create, name='set_create'),
+    url(r'^set/view/', views.get_set, name='get_set'),
 )

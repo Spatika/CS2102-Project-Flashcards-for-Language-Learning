@@ -66,17 +66,15 @@ def signup_user(request):
 	return render(request, 'quiz/dashboard.html' ,{'state': 'Error occured', 'username': username, 'password': password})
 
 def create_set_form(request):
-	template = loader.get_template('quiz/createSet.html')
-	context = RequestContext(request, {})
-	return HttpResponse(template.render(context))
+	return render(request, 'quiz/createSet.html', { 'languages': Language.objects.all() })
 
 def userPage(request):
 	template = loader.get_template('quiz/userPage.html')
 	context = RequestContext(request, {})
 	return HttpResponse(template.render(context))
 
-# def search(request,user_id):
 def search(request):
+	print("In search")
 	template = loader.get_template('quiz/userPage.html')
 	if request.POST:
 		decode_json = request.POST.get('srch-term')
@@ -85,14 +83,14 @@ def search(request):
 			Q(description__contains=decode_json)|
 			Q(language_from__name__contains=decode_json)|
 			Q(language_to__name__contains=decode_json)
-			).filter(user__name='shweta')
+			).filter(user__username='supraja')
 		print(user_sets)
 		other_sets = Set.objects.filter(
 			Q(title__contains=decode_json)|
 			Q(description__contains=decode_json)|
 			Q(language_from__name__contains=decode_json)|
 			Q(language_to__name__contains=decode_json)
-			).filter(~Q(user__name='shweta'))
+			).filter(~Q(user__username='supraja'))
 		print(other_sets)
 		context = {'UserSets':user_sets, 'OtherSets':other_sets}
 	return HttpResponse(template.render(context))
@@ -118,3 +116,13 @@ def set_create(request):
 		return render(request, 'quiz/dashboard.html' ,{'state':'successfully created set', 'sets': sets, 'number_of_sets': len(sets)})
 	else:
 		return render(request, 'quiz/dashboard.html' ,{'state':'Could not create set', 'sets': sets, 'number_of_sets': len(sets)})
+
+def get_set(request):
+	template = loader.get_template('quiz/cards.html')
+	#data = json.loads(request.body)
+	#user_set_data = data['set'] 
+	#set_cards  = Card.objects.filter(title_contains= user_set_data['title'])
+	set_cards = Card.objects.filter(set__title = 'A1 Spanish')
+	print(set_cards)
+	context = {'SetCards':set_cards}
+	return HttpResponse(template.render(context))
