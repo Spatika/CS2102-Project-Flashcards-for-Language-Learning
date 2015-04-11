@@ -132,3 +132,31 @@ def get_set(request):
 	print(set_cards)
 	context = {'SetCards':set_cards}
 	return HttpResponse(template.render(context))
+
+# Get request to display form
+def edit_set_form(request, set_id):
+	return render(request, 'quiz/editSet.html' ,{ 'languages': Language.objects.all(), 'set': Set.objects.get(pk=set_id) })
+
+# Triggered when OK is clicked. Needs set_id as part of get req body
+def edit_set(request):
+	retrieved_user = User.objects.get(username=request.user)
+	sets = Set.objects.filter(user=retrieved_user)
+	if request.POST:
+		set_id = request.POST.get('setId')
+		set_to_edit = Set.objects.get(pk=set_id)
+		request_title = request.POST.get('title')
+		request_description = request.POST.get('description')
+		request_language_to = request.POST.get('languageTo')
+		request_language_from = request.POST.get('languageFrom')
+		retrieve_language = lambda x: Language.objects.get(pk=x)
+		set_to_edit.title = request_title
+		set_to_edit.description = request_description
+		set_to_edit.language_to = retrieve_language(request_language_to)
+		set_to_edit.language_from = retrieve_language(request_language_from)
+		set_to_edit.save()
+		return render(request, 'quiz/dashboard.html' ,{'state':'successfully edited set', 'sets': sets, 'number_of_sets': len(sets)})
+	else:
+		return render(request, 'quiz/dashboard.html' ,{'state':'Could not edit set', 'sets': sets, 'number_of_sets': len(sets)})
+
+
+
