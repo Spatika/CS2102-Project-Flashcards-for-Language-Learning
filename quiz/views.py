@@ -3,19 +3,14 @@ from django.http import HttpResponse
 from django.template import RequestContext, loader
 from django.shortcuts import get_object_or_404, render
 from .models import Card, Set, Language
-import json
-
+from django.db.models import Q
 from django.contrib.auth import authenticate, login
 from django.core.context_processors import csrf
 from django.contrib.auth.models import User
-from quiz.models import Set
 import logging
+import json
 
 logger = logging.getLogger(__name__)
-
-from django.db.models import Q
-from quiz.models import *
-import json
 
 def index(request):
 	template = loader.get_template('quiz/index.html')
@@ -40,7 +35,7 @@ def login_user(request):
 			user_id = User.objects.filter(username=username)
 			sets = Set.objects.filter(user=user_id)
 			return render(request, 'quiz/dashboard.html' ,{'state':state, 'username': username, 'password': password, 'sets': sets, 'number_of_sets': len(sets)})
-	state="Invalid login credentials"
+	state = "Invalid login credentials"
 	return render(request, 'quiz/index.html', {'state': state})
 
 def debug_view(request):
