@@ -64,8 +64,9 @@ def userPage(request):
 	context = RequestContext(request, {})
 	return HttpResponse(template.render(context))
 
-# def search(request,user_id):
+# def search(request,user_name):
 def search(request):
+	print(user_name)
 	template = loader.get_template('quiz/userPage.html')
 	if request.POST:
 		decode_json = request.POST.get('srch-term')
