@@ -66,7 +66,7 @@ def userPage(request):
 
 # def search(request,user_name):
 def search(request):
-	print(user_name)
+	print("In search")
 	template = loader.get_template('quiz/userPage.html')
 	if request.POST:
 		decode_json = request.POST.get('srch-term')
@@ -75,14 +75,14 @@ def search(request):
 			Q(description__contains=decode_json)|
 			Q(language_from__name__contains=decode_json)|
 			Q(language_to__name__contains=decode_json)
-			).filter(user__name='shweta')
+			).filter(user__username='supraja')
 		print(user_sets)
 		other_sets = Set.objects.filter(
 			Q(title__contains=decode_json)|
 			Q(description__contains=decode_json)|
 			Q(language_from__name__contains=decode_json)|
 			Q(language_to__name__contains=decode_json)
-			).filter(~Q(user__name='shweta'))
+			).filter(~Q(user__username='supraja'))
 		print(other_sets)
 		context = {'UserSets':user_sets, 'OtherSets':other_sets}
 	return HttpResponse(template.render(context))
