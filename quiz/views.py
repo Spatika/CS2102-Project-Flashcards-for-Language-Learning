@@ -34,12 +34,15 @@ def login_user(request):
 			user_name = username
 			user_id = User.objects.filter(username=username)
 			sets = Set.objects.filter(user=user_id)
-			return render(request, 'quiz/dashboard.html' ,{'state':state, 'username': username, 'password': password, 'sets': sets, 'number_of_sets': len(sets)})
+			response = HttpResponse()
+			response = render(request, 'quiz/dashboard.html' ,{'state':state, 'username': username, 'password': password, 'sets': sets, 'number_of_sets': len(sets)})
+			# response.set_cookie('user', username)
+			return response
 	state = "Invalid login credentials"
 	return render(request, 'quiz/index.html', {'state': state})
 
 def debug_view(request):
-	template = loader.get_template('quiz/dashboard.html')
+	template = loader.get_template('quiz/createSet.html')
 	context = RequestContext(request, {})
 	return HttpResponse(template.render(context))
 
@@ -49,22 +52,33 @@ def signup_user(request):
 	username = password = ''
 	if request.POST:
 		username = request.POST.get('username')
-        password = request.POST.get('password')
-        # creating a new user
-        user = User.objects.create_user(username, username, password)
-        user.backend = 'django.contrib.auth.backends.ModelBackend'
-        user.save()
+		password = request.POST.get('password')
+		user = User.objects.create_user(username, username, password)
+		user.backend = 'django.contrib.auth.backends.ModelBackend'
+		user.save()
         authenticate(username=username, password=password)
         login(request, user)
-        state = "New user created successfully"
-	return render(request, 'quiz/dashboard.html' ,{'state':state, 'username': username, 'password': password})
+        state = "New user successfully created"
+        response = HttpResponse()
+        response = render(request, 'quiz/dashboard.html' ,{'state':state, 'username': username, 'password': password})
+        # response.set_cookie('user', username)
+        return response
+	return render(request, 'quiz/dashboard.html' ,{'state': 'Error occured', 'username': username, 'password': password})
+
+def create_set_form(request):
+	return render(request, 'quiz/createSet.html', { 'languages': Language.objects.all() })
 
 def userPage(request):
 	template = loader.get_template('quiz/userPage.html')
 	context = RequestContext(request, {})
 	return HttpResponse(template.render(context))
 
-# def search(request,user_name):
+def return_to_dashboard(request):
+	state = "New set successfully created"
+	retrieved_user = User.objects.get(username=request.user)
+	sets = Set.objects.filter(user=retrieved_user)
+	return render(request, 'quiz/dashboard.html' ,{'state':'Back home bitches', 'sets': sets, 'number_of_sets': len(sets)})
+
 def search(request):
 	print("In search")
 	template = loader.get_template('quiz/userPage.html')
@@ -88,22 +102,26 @@ def search(request):
 	return HttpResponse(template.render(context))
 
 def set_create(request):
-	data = json.loads(request.body)
-	user_set_data = data['set']
-	user_set = Set(user=User.objects.get(pk=user_set_data['user']), 
-		title=user_set_data['title'], 
-		description=user_set_data['description'], 
-		language_to=Language.objects.get(pk=user_set_data['language_to']), 
-		language_from=Language.objects.get(pk=user_set_data['language_from']))
-	user_set.save()
-	user_set_cards = user_set_data['cards']
-	for card in user_set_cards:
-		user_set_card = Card(term=card['term'],
-			definition=card['definition'],
-			set=Set.objects.get(title=user_set_data['title'], 
-				user=User.objects.get(pk=user_set_data['user'])))
-		user_set_card.save()
-	return HttpResponse()
+	context = {}
+	context.update(csrf(request))
+	retrieved_user = User.objects.get(username=request.user)
+	sets = Set.objects.filter(user=retrieved_user)
+	if request.POST:
+		request_title = request.POST.get('title')
+		request_description = request.POST.get('description')
+		request_language_to = request.POST.get('languageTo')
+		request_language_from = request.POST.get('languageFrom')
+		retrieve_language = lambda x: Language.objects.get(pk=x)
+		created_set = Set(user = retrieved_user, 
+			title = request_title, 
+			description = request_description, 
+			language_to = retrieve_language(request_language_to),
+			language_from = retrieve_language(request_language_from))
+		created_set.save()
+		state = "New set successfully created"
+		return render(request, 'quiz/dashboard.html' ,{'state':'successfully created set', 'sets': sets, 'number_of_sets': len(sets)})
+	else:
+		return render(request, 'quiz/dashboard.html' ,{'state':'Could not create set', 'sets': sets, 'number_of_sets': len(sets)})
 
 def get_set(request, set_id):
 	
@@ -113,4 +131,31 @@ def get_set(request, set_id):
 	#print(set_cards)
 	context = {'SetCards':set_cards}
 	return HttpResponse(template.render(context))
-	
+
+# Get request to display form
+def edit_set_form(request, set_id):
+	return render(request, 'quiz/editSet.html' ,{ 'languages': Language.objects.all(), 'set': Set.objects.get(pk=set_id) })
+
+# Triggered when OK is clicked. Needs set_id as part of get req body
+def edit_set(request):
+	retrieved_user = User.objects.get(username=request.user)
+	sets = Set.objects.filter(user=retrieved_user)
+	if request.POST:
+		set_id = request.POST.get('setId')
+		set_to_edit = Set.objects.get(pk=set_id)
+		request_title = request.POST.get('title')
+		request_description = request.POST.get('description')
+		request_language_to = request.POST.get('languageTo')
+		request_language_from = request.POST.get('languageFrom')
+		retrieve_language = lambda x: Language.objects.get(pk=x)
+		set_to_edit.title = request_title
+		set_to_edit.description = request_description
+		set_to_edit.language_to = retrieve_language(request_language_to)
+		set_to_edit.language_from = retrieve_language(request_language_from)
+		set_to_edit.save()
+		return render(request, 'quiz/dashboard.html' ,{'state':'successfully edited set', 'sets': sets, 'number_of_sets': len(sets)})
+	else:
+		return render(request, 'quiz/dashboard.html' ,{'state':'Could not edit set', 'sets': sets, 'number_of_sets': len(sets)})
+
+
+

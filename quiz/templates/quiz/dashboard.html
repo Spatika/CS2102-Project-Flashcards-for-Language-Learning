@@ -21,12 +21,16 @@
    <body>
    	{% include 'quiz/navbar.html' %}
 		<div class="container">
-			<h2 class="padded-10"> Welcome, {{ username }}</h2>
+			<h2 class="padded-10"> Welcome, {{ user }}</h2>
 			{% if number_of_sets > 0 %}
 				<h3 class="padded-12"> Your Sets: </h3>
 				<div class="row">
 					{% for set in sets %}
-					<div class="col-md-4">
+
+					<div class="col-md-3">
+						
+						<a href={% url 'quiz.views.edit_set_form' set.id %}>Edit</a>
+
 						<div class="set">
 							<form id = "form1" class="viewset" role = "view" action="/set/view/{{set.id}}" method ="POST">
 							{%csrf_token %}
