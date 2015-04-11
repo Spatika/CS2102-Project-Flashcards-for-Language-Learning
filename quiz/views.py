@@ -82,8 +82,9 @@ def return_to_dashboard(request):
 
 
 def search(request):
+	context = {}
+	context.update(csrf(request))
 	print(request.user)
-	template = loader.get_template('quiz/dashboard.html')
 	if request.POST:
 		decode_json = request.POST.get('srch-term')
 		sets = Set.objects.filter(
@@ -100,9 +101,8 @@ def search(request):
 			Q(language_to__name__contains=decode_json)
 			).filter(~Q(user__username=request.user))
 		print(other_sets)
-		context = {'sets': sets, 'number_of_sets': len(sets), 'OtherSets':other_sets, 'number_of_others': len(other_sets), 'username': request.user}
-		context.update(csrf(request))
-	return HttpResponse(template.render(context))
+		arguments = {'sets': sets, 'number_of_sets': len(sets), 'OtherSets':other_sets, 'number_of_others': len(other_sets), 'username': request.user}
+		return render(request, 'quiz/dashboard.html', arguments)
 	
 def deleteSet(request,set_id):
 
@@ -158,13 +158,7 @@ def set_create(request):
 		return render(request, 'quiz/dashboard.html' ,{'state':'Could not create set', 'sets': sets, 'number_of_sets': len(sets)})
 
 def get_set(request, set_id):
-	
-	template = loader.get_template('quiz/cards.html')
-	
-	set_cards = Card.objects.filter(set = set_id)
-	#print(set_cards)
-	context = {'SetCards':set_cards}
-	return HttpResponse(template.render(context))
+	return render(request, 'quiz/cards.html', { 'SetCards': Card.objects.filter(set = set_id) })
 
 # Get request to display form
 def edit_set_form(request, set_id):
