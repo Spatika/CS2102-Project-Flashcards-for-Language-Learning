@@ -32,13 +32,18 @@
 						<a href={% url 'quiz.views.edit_set_form' set.id %}>Edit</a>
 
 						<div class="set">
+<<<<<<< HEAD
 							<form id = "form1" class="viewset" role = "view" action="/set/view/{{set.id}}/" method ="POST">
 							{%csrf_token %}
 
 							<input type="hidden" name="random" value="1"/>
 							<a href="#" onclick = "$(this).closest('form').submit()"<h5><b>{{ set.title }}</b> </h5> </a>
-
 							</form>
+
+							<form class="deleteSet" role="delete"  action="/delete/{{set.id}}/" method="POST">
+								{% csrf_token %}
+								<button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-remove "></i></button>
+							
 							<h5>{{ set.description }}</h5>
 							<p> <b>Language to:</b> {{ set.language_to }}</p>
 							<p> <b>Language from:</b> {{ set.language_from }} </p>
@@ -52,6 +57,26 @@
 					<h3>You have not created any sets yet</h3>
 				</div>
 			{% endif %}
+			{% if number_of_others > 0 %}
+				<h3 class="padded-10"> Other Sets: </h3>
+				<div class="row">
+					{% for oset in OtherSets %}
+					<div class="col-md-3">
+						<div class="set">
+							<h5>{{ oset.title }}</h5>
+
+							<form role="add"  action="/add/{{oset.id}}/" method="POST">
+								{% csrf_token %}
+							 <button class="btn btn-default" type="submit">Add</button>
+							</form>
+							<h5>{{ oset.description }}</h5>
+							<p> <b>Language to:</b> {{ oset.language_to }}</p>
+							<p> <b>Language from:</b> {{ oset.language_from }} </p>
+						</div>
+					</div>
+					{% endfor %}
+					</div>
+			{% endif %}	
 		</div>
    </body>
 </html>

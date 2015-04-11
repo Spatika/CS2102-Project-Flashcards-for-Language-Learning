@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.contrib.auth import authenticate, login
 from django.core.context_processors import csrf
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404, HttpResponseRedirect
 import logging
 import json
 
@@ -79,27 +80,61 @@ def return_to_dashboard(request):
 	sets = Set.objects.filter(user=retrieved_user)
 	return render(request, 'quiz/dashboard.html' ,{'state':'Back home bitches', 'sets': sets, 'number_of_sets': len(sets)})
 
+
 def search(request):
-	print("In search")
-	template = loader.get_template('quiz/userPage.html')
+	
+	print(request.user)
+	template = loader.get_template('quiz/dashboard.html')
 	if request.POST:
 		decode_json = request.POST.get('srch-term')
-		user_sets = Set.objects.filter(
+		sets = Set.objects.filter(
 			Q(title__contains=decode_json)|
 			Q(description__contains=decode_json)|
 			Q(language_from__name__contains=decode_json)|
 			Q(language_to__name__contains=decode_json)
-			).filter(user__username='supraja')
-		print(user_sets)
+			).filter(user__username=request.user)
+		print(sets)
 		other_sets = Set.objects.filter(
 			Q(title__contains=decode_json)|
 			Q(description__contains=decode_json)|
 			Q(language_from__name__contains=decode_json)|
 			Q(language_to__name__contains=decode_json)
-			).filter(~Q(user__username='supraja'))
+			).filter(~Q(user__username=request.user))
 		print(other_sets)
-		context = {'UserSets':user_sets, 'OtherSets':other_sets}
+		context = {'sets': sets, 'number_of_sets': len(sets), 'OtherSets':other_sets, 'number_of_others': len(other_sets), 'username': request.user}
+		context.update(csrf(request))
 	return HttpResponse(template.render(context))
+	
+def deleteSet(request,set_id):
+
+	context = {}
+	context.update(csrf(request))
+	
+	Card.objects.filter(id = set_id).delete()
+	Set.objects.filter(id = set_id).delete()
+
+	
+	sets = Set.objects.filter(user=request.user)
+	print(sets)
+	return render(request, 'quiz/dashboard.html' ,{'username': request.user, 'sets': sets, 'number_of_sets': len(sets)})
+	
+	
+	#return HttpResponse(template.render(context))
+
+def addSet(request, set_id):
+	context = {}
+	context.update(csrf(request))
+	s = Set.objects.get(id=set_id)
+	b = Set(title = s.title, description = s.description, language_to = s.language_to, language_from = s.language_from, user = request.user )
+	# b = Domain(name = decode_json['0'],
+		# full_name = decode_json['1'], status = decode_json['2'], account = accountObj, ips=decode_json['4'],
+		# cname= decode_json['5'], billing_date_counter = decode_json['6'], created_at = decode_json['7'], is_active = decode_json['8'],)
+	b.save()
+	sets = Set.objects.filter(user=request.user)
+
+	print(sets)
+	return render(request, 'quiz/dashboard.html' ,{'username': request.user, 'sets': sets, 'number_of_sets': len(sets)})
+	
 
 def set_create(request):
 	context = {}
