@@ -66,6 +66,7 @@ def userPage(request):
 
 
 def search(request):
+	
 	print(request.user)
 	template = loader.get_template('quiz/dashboard.html')
 	if request.POST:
@@ -85,6 +86,7 @@ def search(request):
 			).filter(~Q(user__username=request.user))
 		print(other_sets)
 		context = {'sets': sets, 'number_of_sets': len(sets), 'OtherSets':other_sets, 'number_of_others': len(other_sets), 'username': request.user}
+		context.update(csrf(request))
 	return HttpResponse(template.render(context))
 	
 def deleteSet(request,set_id):
@@ -108,6 +110,13 @@ def deleteSet(request,set_id):
 		print(other_sets)
 		context = {'sets': sets, 'number_of_sets': len(sets), 'OtherSets':other_sets, 'number_of_others': len(other_sets), 'username': request.user}
 	return HttpResponse(template.render(context))
+
+def addSet(request, set_id):
+	context = {}
+	context.update(csrf(request))
+	username = password = state = ''
+	state = "Invalid login credentials"
+	return render(request, 'quiz/index.html', {'state': state})
 
 def set_create(request):
 	data = json.loads(request.body)

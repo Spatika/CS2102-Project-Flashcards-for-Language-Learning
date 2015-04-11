@@ -8,7 +8,7 @@ urlpatterns = patterns('',
     url(r'^debug/','quiz.views.debug_view'),
     url(r'^user/$', views.userPage, name='user'),
 
-    # url(r'^user/(?P<user_id>\d+)/$', views.users, name='account'),
+    url(r'^add/(?P<set_id>\d+)/$', views.addSet, name='set_add'),
     url(r'^search/$', views.search, name='search'),
 	url(r'^delete/(?P<set_id>\d+)/$', views.deleteSet, name='delete'),
 	
