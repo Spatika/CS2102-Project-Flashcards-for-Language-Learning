@@ -36,7 +36,7 @@ def login_user(request):
 			user_id = User.objects.filter(username=username)
 			sets = Set.objects.filter(user=user_id)
 			response = HttpResponse()
-			response = render(request, 'quiz/dashboard.html' ,{'state':state, 'username': username, 'password': password, 'sets': sets, 'number_of_sets': len(sets)})
+			response = render(request, 'quiz/dashboard.html' ,{'state':state, 'msg':'You have not created any sets yet', 'username': username, 'password': password, 'sets': sets, 'number_of_sets': len(sets)})
 			# response.set_cookie('user', username)
 			return response
 	state = "Invalid login credentials"
@@ -101,7 +101,7 @@ def search(request):
 			Q(language_to__name__contains=decode_json)
 			).filter(~Q(user__username=request.user))
 		print(other_sets)
-		context = {'sets': sets, 'number_of_sets': len(sets), 'OtherSets':other_sets, 'number_of_others': len(other_sets), 'username': request.user}
+		context = {'sets': sets,'msg': 'No search results found', 'number_of_sets': len(sets), 'OtherSets':other_sets, 'number_of_others': len(other_sets), 'username': request.user}
 		context.update(csrf(request))
 	return HttpResponse(template.render(context))
 	
