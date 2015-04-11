@@ -13,5 +13,5 @@ urlpatterns = patterns('',
     # url(r'^search/(?P<user_name>[\w\s.])/$', views.search, name='search'),
     url(r'^set/create/', views.set_create, name='set_create'),
 
-    url(r'^set/view/', views.get_set, name='get_set'),
+    url(r'^set/view/(?P<set_id>\d+)/$', views.get_set, name='get_set'),
 )

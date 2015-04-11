@@ -105,13 +105,12 @@ def set_create(request):
 		user_set_card.save()
 	return HttpResponse()
 
-def get_set(request):
+def get_set(request, set_id):
+	
 	template = loader.get_template('quiz/cards.html')
-	#data = json.loads(request.body)
-	#user_set_data = data['set'] 
-	#set_cards  = Card.objects.filter(title_contains= user_set_data['title'])
-	set_cards = Card.objects.filter(set__title = 'A1 Spanish')
-	print(set_cards)
+	
+	set_cards = Card.objects.filter(set = set_id)
+	#print(set_cards)
 	context = {'SetCards':set_cards}
 	return HttpResponse(template.render(context))
 	
