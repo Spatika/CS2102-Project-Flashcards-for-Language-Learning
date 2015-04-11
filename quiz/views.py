@@ -43,7 +43,7 @@ def login_user(request):
 	return render(request, 'quiz/index.html', {'state': state})
 
 def debug_view(request):
-	template = loader.get_template('quiz/createSet.html')
+	template = loader.get_template('quiz/cardsInEditForm.html')
 	context = RequestContext(request, {})
 	return HttpResponse(template.render(context))
 
@@ -82,7 +82,6 @@ def return_to_dashboard(request):
 
 
 def search(request):
-	
 	print(request.user)
 	template = loader.get_template('quiz/dashboard.html')
 	if request.POST:
@@ -169,7 +168,12 @@ def get_set(request, set_id):
 
 # Get request to display form
 def edit_set_form(request, set_id):
-	return render(request, 'quiz/editSet.html' ,{ 'languages': Language.objects.all(), 'set': Set.objects.get(pk=set_id) })
+	required_set = Set.objects.get(pk=set_id)
+	cards = Card.objects.filter(set = required_set)
+	return render(request, 'quiz/editSet.html' ,{ 'languages': Language.objects.all(), 'set': Set.objects.get(pk=set_id), 'cards': cards })
+
+def set_card_form(request, set_id):
+	return render(request, 'quiz/setCards.html', { 'set_id': set_id })
 
 # Triggered when OK is clicked. Needs set_id as part of get req body
 def edit_set(request):
@@ -192,5 +196,24 @@ def edit_set(request):
 	else:
 		return render(request, 'quiz/dashboard.html' ,{'state':'Could not edit set', 'sets': sets, 'number_of_sets': len(sets)})
 
+def create_card(request):
+	retrieved_user = User.objects.get(username=request.user)
+	sets = Set.objects.filter(user=retrieved_user)
+	if request.POST:
+		set_id = request.POST.get('setId')
+		current_set = Set.objects.get(pk=set_id)
+		request_term = request.POST.get('term')
+		request_definition = request.POST.get('definition')
+		card = Card(
+			set = Set.objects.get(pk=set_id),
+			term = request_term,
+			definition = request_definition,
+			)
+		card.save()
+		return render(request, 'quiz/editSet.html' ,{ 'languages': Language.objects.all(), 'set': current_set, 'cards': Card.objects.filter(set=current_set)})
 
-
+def delete_card(request, card_id, set_id):
+	card = Card.objects.get(pk=card_id)
+	set = Set.objects.get(pk=set_id)
+	card.delete()
+	return render(request, 'quiz/editSet.html' ,{ 'languages': Language.objects.all(), 'set': set, 'cards': Card.objects.filter(set=set) })

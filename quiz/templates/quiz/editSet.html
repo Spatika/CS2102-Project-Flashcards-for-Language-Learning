@@ -45,15 +45,20 @@
 
 			    <div class="form-group">
 				    <label for="languageTo">Language To: </label>
-				    	<select name="languageTo" s>
+				    	<select name="languageTo">
 				    	{% for language in languages %}
 						    <option value="{{ language.name }}" {% if language.name = set.language_to.name %} selected = "selected" {% endif %}>{{ language.name }}</option>
 						{% endfor %}
   						</select>
 				</div>
+				<div>					
+					<label for="cards">Cards: </label>
+					<a href={% url 'quiz.views.set_card_form' set.id %}>Add Card</a>
+				</div>
 				<input type='hidden' name='setId' value={{ set.id }} /></input>
 			    <input type="submit" value="OK">
 			</form>
-		</div>
+			{% include 'quiz/cardsInEditForm.html' %}
+		</div> <!-- Container ends here -->
    </body>
 </html>
