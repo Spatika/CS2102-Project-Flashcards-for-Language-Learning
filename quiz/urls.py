@@ -12,4 +12,6 @@ urlpatterns = patterns('',
     url(r'^createSetForm/', views.create_set_form, name='quiz.views.create_set_form'),
     url(r'^set/create/', views.set_create, name='set_create'),
     url(r'^set/view/', views.get_set, name='get_set'),
+    url(r'^dashboard/', views.return_to_dashboard, name='quiz.views.return_to_dashboard'),
+
 )

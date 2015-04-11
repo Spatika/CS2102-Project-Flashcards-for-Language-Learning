@@ -73,6 +73,12 @@ def userPage(request):
 	context = RequestContext(request, {})
 	return HttpResponse(template.render(context))
 
+def return_to_dashboard(request):
+	state = "New set successfully created"
+	retrieved_user = User.objects.get(username=request.user)
+	sets = Set.objects.filter(user=retrieved_user)
+	return render(request, 'quiz/dashboard.html' ,{'state':'Back home bitches', 'sets': sets, 'number_of_sets': len(sets)})
+
 def search(request):
 	print("In search")
 	template = loader.get_template('quiz/userPage.html')
