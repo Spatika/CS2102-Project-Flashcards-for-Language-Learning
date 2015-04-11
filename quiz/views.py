@@ -114,9 +114,17 @@ def deleteSet(request,set_id):
 def addSet(request, set_id):
 	context = {}
 	context.update(csrf(request))
-	username = password = state = ''
-	state = "Invalid login credentials"
-	return search(request)
+	s = Set.objects.get(id=set_id)
+	b = Set(title = s.title, description = s.description, language_to = s.language_to, language_from = s.language_from, user = request.user )
+	# b = Domain(name = decode_json['0'],
+		# full_name = decode_json['1'], status = decode_json['2'], account = accountObj, ips=decode_json['4'],
+		# cname= decode_json['5'], billing_date_counter = decode_json['6'], created_at = decode_json['7'], is_active = decode_json['8'],)
+	b.save()
+	sets = Set.objects.filter(user=request.user)
+
+	print(sets)
+	return render(request, 'quiz/dashboard.html' ,{'username': request.user, 'sets': sets, 'number_of_sets': len(sets)})
+	
 
 def set_create(request):
 	data = json.loads(request.body)
