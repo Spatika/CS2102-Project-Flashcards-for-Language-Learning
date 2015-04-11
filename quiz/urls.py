@@ -13,5 +13,5 @@ urlpatterns = patterns('',
     url(r'^set/create/', views.set_create, name='set_create'),
     url(r'^set/view/', views.get_set, name='get_set'),
     url(r'^dashboard/', views.return_to_dashboard, name='quiz.views.return_to_dashboard'),
-
+    url(r'^set/edit/$', views.edit_set, name="quiz.views.edit_set")
 )
