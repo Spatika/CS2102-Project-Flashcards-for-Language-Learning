@@ -86,6 +86,28 @@ def search(request):
 		print(other_sets)
 		context = {'sets': sets, 'number_of_sets': len(sets), 'OtherSets':other_sets, 'number_of_others': len(other_sets), 'username': request.user}
 	return HttpResponse(template.render(context))
+	
+def deleteSet(request,set_id):
+	
+	template = loader.get_template('quiz/dashboard.html')
+	if request.POST:
+		decode_json = request.POST.get('srch-term')
+		sets = Set.objects.filter(
+			Q(title__contains=decode_json)|
+			Q(description__contains=decode_json)|
+			Q(language_from__name__contains=decode_json)|
+			Q(language_to__name__contains=decode_json)
+			).filter(user__username=request.user)
+		print(sets)
+		other_sets = Set.objects.filter(
+			Q(title__contains=decode_json)|
+			Q(description__contains=decode_json)|
+			Q(language_from__name__contains=decode_json)|
+			Q(language_to__name__contains=decode_json)
+			).filter(~Q(user__username=request.user))
+		print(other_sets)
+		context = {'sets': sets, 'number_of_sets': len(sets), 'OtherSets':other_sets, 'number_of_others': len(other_sets), 'username': request.user}
+	return HttpResponse(template.render(context))
 
 def set_create(request):
 	data = json.loads(request.body)

@@ -48,6 +48,12 @@
 					<div class="col-md-3">
 						<div class="set">
 							<h5>{{ set.title }}</h5>
+							<form class="deleteSet" role="delete"  action="/delete/{{oset.id}}" method="POST">
+							{% csrf_token %}
+							 <div class="input-group-btn">
+								<button class="btn btn-default" type="submit">Delete</button>
+							</div>
+							
 							<h5>{{ oset.description }}</h5>
 							<p> <b>Language to:</b> {{ oset.language_to }}</p>
 							<p> <b>Language from:</b> {{ oset.language_from }} </p>
