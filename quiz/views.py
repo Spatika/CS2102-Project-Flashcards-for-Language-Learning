@@ -10,6 +10,8 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, HttpResponseRedirect
 import logging
 import json
+from django.db import IntegrityError
+
 
 logger = logging.getLogger(__name__)
 
