@@ -69,7 +69,7 @@ def signup_user(request):
 	return render(request, 'quiz/dashboard.html' ,{'state': 'Error occured', 'username': username, 'password': password})
 
 def create_set_form(request):
-	return render(request, 'quiz/createSet.html', { 'languages': Language.objects.all() })
+	return render(request, 'quiz/createSet.html', { 'languages': Language.objects.order_by('name') })
 
 def userPage(request):
 	template = loader.get_template('quiz/userPage.html')
@@ -166,7 +166,7 @@ def get_set(request, set_id):
 def edit_set_form(request, set_id):
 	required_set = Set.objects.get(pk=set_id)
 	cards = Card.objects.filter(set = required_set)
-	return render(request, 'quiz/editSet.html' ,{ 'languages': Language.objects.all(), 'set': Set.objects.get(pk=set_id), 'cards': cards })
+	return render(request, 'quiz/editSet.html' ,{ 'languages': Language.objects.order_by('name'), 'set': Set.objects.get(pk=set_id), 'cards': cards })
 
 def set_card_form(request, set_id):
 	return render(request, 'quiz/setCards.html', { 'set_id': set_id })
@@ -206,18 +206,18 @@ def create_card(request):
 			definition = request_definition,
 			)
 		card.save()
-		return render(request, 'quiz/editSet.html' ,{ 'languages': Language.objects.all(), 'set': current_set, 'cards': Card.objects.filter(set=current_set)})
+		return render(request, 'quiz/editSet.html' ,{ 'languages': Language.objects.order_by('name'), 'set': current_set, 'cards': Card.objects.filter(set=current_set)})
 
 def delete_card(request, card_id, set_id):
 	card = Card.objects.get(pk=card_id)
 	set = Set.objects.get(pk=set_id)
 	card.delete()
-	return render(request, 'quiz/editSet.html' ,{ 'languages': Language.objects.all(), 'set': set, 'cards': Card.objects.filter(set=set) })
+	return render(request, 'quiz/editSet.html' ,{ 'languages': Language.objects.order_by('name'), 'set': set, 'cards': Card.objects.filter(set=set) })
 
 def edit_card_form(request, card_id, set_id):
 	card = Card.objects.get(pk=card_id)
 	set = Set.objects.get(pk=set_id)
-	return render(request, 'quiz/editCardForm.html' ,{ 'languages': Language.objects.all(), 'set': set, 'card': card })
+	return render(request, 'quiz/editCardForm.html' ,{ 'languages': Language.objects.order_by('name'), 'set': set, 'card': card })
 
 # Triggered when OK is clicked. Needs card_id as part of get req body
 def edit_card(request):
@@ -233,6 +233,6 @@ def edit_card(request):
 		card_to_edit.term = request_term
 		card_to_edit.definition = request_definition
 		card_to_edit.save()
-		return render(request, 'quiz/editSet.html' ,{ 'languages': Language.objects.all(), 'set': current_set, 'cards': Card.objects.filter(set=current_set)})
+		return render(request, 'quiz/editSet.html' ,{ 'languages': Language.objects.order_by('name'), 'set': current_set, 'cards': Card.objects.filter(set=current_set)})
 
 
