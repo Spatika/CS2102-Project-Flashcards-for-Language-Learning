@@ -20,4 +20,6 @@ urlpatterns = patterns('',
     url(r'^setCardForm/(?P<set_id>\d+)/$', views.set_card_form, name="quiz.views.set_card_form"),
     url(r'^createCard/', views.create_card, name='quiz.views.create_card'),
     url(r'^deleteCard/(?P<card_id>(\d+))/(?P<set_id>(\d+))/$', views.delete_card, name='quiz.views.delete_card'),
+    url(r'^editCardForm/(?P<card_id>(\d+))/(?P<set_id>(\d+))/$', views.edit_card_form, name='quiz.views.edit_card_form'),
+    url(r'^editCard/', views.edit_card, name='quiz.views.edit_card'),
 )
