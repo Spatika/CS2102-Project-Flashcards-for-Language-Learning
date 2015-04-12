@@ -1,5 +1,5 @@
 import sqlite3
-conn = sqlite3.connect(‘flashcards.db’)
+conn = sqlite3.connect('flashcards.db')
 c = conn.cursor
 
 def search_sets(username, searchTerm):
