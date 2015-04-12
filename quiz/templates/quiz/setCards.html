@@ -25,15 +25,15 @@
 				{% csrf_token %}
 				<div class="form-group">
 				    <label for="term">Term: </label>
-				    <input id="term" type="text" name="term">
+				    <input class="form-control" id="term" type="text" name="term">
 			    </div>
 			    
 			    <div class="form-group">
 				    <label for="definition">Definition: </label>
-				    <input id="definition" type="text" name="definition">
+				    <input class="form-control" id="definition" type="text" name="definition">
 				</div>
           <input type='hidden' name='setId' value={{set_id}}></input>
-			    <input type="submit" value="OK">
+			    <input type="submit" value="Submit" class="btn btn-default">
 			</form>
 		</div>
    </body>
