@@ -11,7 +11,9 @@
    </head>
 <body>
 	{% include 'quiz/navbar.html' %}
-	<div>
+	<!-- <div> -->
+  <div class="container">
+    <div class="row">
 	  {% for card in SetCards %}
 	    <div class="col-md-3">
             <div class="set">
@@ -20,6 +22,7 @@
             </div>
     	</div>
   {% endfor %}
+</div>
 </div>
 </body>
 </html>
