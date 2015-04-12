@@ -9,9 +9,9 @@ def search_sets(username, searchTerm):
 		WHERE du.user = u.deck_user \
 		and du.title = u.deck_title \
 		u.deck_title LIKE '\% %s \%' \
-		or u.language_from like '\% %s \%' \
-		or u.language_to like '\% %s \%' \
-		or du.description like '\% %s \%' \
+		or u.language_from LIKE '\% %s \%' \
+		or u.language_to LIKE '\% %s \%' \
+		or du.description LIKE '\% %s \%' \
 		and u.deck_user = '%s'"
 
 	otherSetsSearchQueryString = 
@@ -19,9 +19,9 @@ def search_sets(username, searchTerm):
 		WHERE du.user = u.deck_user \
 		and du.title = u.deck_title \
 		u.deck_title LIKE '\% %s \%' \
-		or u.language_from like '\% %s \%' \
-		or u.language_to like '\% %s \%' \
-		or du.description like '\% %s \%' \
+		or u.language_from LIKE '\% %s \%' \
+		or u.language_to LIKE '\% %s \%' \
+		or du.description LIKE '\% %s \%' \
 		and u.deck_user <> '%s'"
 
 	searchResults['mySets'] = c.execute(mySetsSearchQueryString % 
