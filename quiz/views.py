@@ -158,7 +158,7 @@ def set_create(request):
 		return render(request, 'quiz/dashboard.html' ,{'state':'Could not create set', 'sets': sets, 'number_of_sets': len(sets)})
 
 def get_set(request, set_id):
-	return render(request, 'quiz/cards.html', { 'SetCards': Card.objects.filter(set = set_id) })
+	return render(request, 'quiz/viewCards.html', { 'SetCards': Card.objects.filter(set = set_id) })
 
 # Get request to display form
 def edit_set_form(request, set_id):
