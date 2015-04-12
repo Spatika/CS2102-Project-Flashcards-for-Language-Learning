@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.contrib.auth import authenticate, login
 from django.core.context_processors import csrf
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404, HttpResponseRedirect
 import logging
 import json
 
@@ -35,14 +36,14 @@ def login_user(request):
 			user_id = User.objects.filter(username=username)
 			sets = Set.objects.filter(user=user_id)
 			response = HttpResponse()
-			response = render(request, 'quiz/dashboard.html' ,{'state':state, 'username': username, 'password': password, 'sets': sets, 'number_of_sets': len(sets)})
+			response = render(request, 'quiz/dashboard.html' ,{'state':state, 'msg':'You have not created any sets yet', 'username': username, 'password': password, 'sets': sets, 'number_of_sets': len(sets)})
 			# response.set_cookie('user', username)
 			return response
 	state = "Invalid login credentials"
 	return render(request, 'quiz/index.html', {'state': state})
 
 def debug_view(request):
-	template = loader.get_template('quiz/createSet.html')
+	template = loader.get_template('quiz/cardsInEditForm.html')
 	context = RequestContext(request, {})
 	return HttpResponse(template.render(context))
 
@@ -79,27 +80,60 @@ def return_to_dashboard(request):
 	sets = Set.objects.filter(user=retrieved_user)
 	return render(request, 'quiz/dashboard.html' ,{'state':'Back home bitches', 'sets': sets, 'number_of_sets': len(sets)})
 
+
 def search(request):
-	print("In search")
-	template = loader.get_template('quiz/userPage.html')
+	context = {}
+	context.update(csrf(request))
+	print(request.user)
 	if request.POST:
 		decode_json = request.POST.get('srch-term')
-		user_sets = Set.objects.filter(
+		sets = Set.objects.filter(
 			Q(title__contains=decode_json)|
 			Q(description__contains=decode_json)|
 			Q(language_from__name__contains=decode_json)|
 			Q(language_to__name__contains=decode_json)
-			).filter(user__username='supraja')
-		print(user_sets)
+			).filter(user__username=request.user)
+		print(sets)
 		other_sets = Set.objects.filter(
 			Q(title__contains=decode_json)|
 			Q(description__contains=decode_json)|
 			Q(language_from__name__contains=decode_json)|
 			Q(language_to__name__contains=decode_json)
-			).filter(~Q(user__username='supraja'))
+			).filter(~Q(user__username=request.user))
 		print(other_sets)
-		context = {'UserSets':user_sets, 'OtherSets':other_sets}
-	return HttpResponse(template.render(context))
+		arguments = {'sets': sets,'msg': 'No search results found', 'number_of_sets': len(sets), 'OtherSets':other_sets, 'number_of_others': len(other_sets), 'username': request.user}
+		return render(request, 'quiz/dashboard.html', arguments)
+	
+def deleteSet(request,set_id):
+
+	context = {}
+	context.update(csrf(request))
+	
+	Card.objects.filter(id = set_id).delete()
+	Set.objects.filter(id = set_id).delete()
+
+	
+	sets = Set.objects.filter(user=request.user)
+	print(sets)
+	return render(request, 'quiz/dashboard.html' ,{'username': request.user, 'sets': sets, 'number_of_sets': len(sets)})
+	
+	
+	#return HttpResponse(template.render(context))
+
+def addSet(request, set_id):
+	context = {}
+	context.update(csrf(request))
+	s = Set.objects.get(id=set_id)
+	b = Set(title = s.title, description = s.description, language_to = s.language_to, language_from = s.language_from, user = request.user )
+	# b = Domain(name = decode_json['0'],
+		# full_name = decode_json['1'], status = decode_json['2'], account = accountObj, ips=decode_json['4'],
+		# cname= decode_json['5'], billing_date_counter = decode_json['6'], created_at = decode_json['7'], is_active = decode_json['8'],)
+	b.save()
+	sets = Set.objects.filter(user=request.user)
+
+	print(sets)
+	return render(request, 'quiz/dashboard.html' ,{'username': request.user, 'sets': sets, 'number_of_sets': len(sets)})
+	
 
 def set_create(request):
 	context = {}
@@ -124,17 +158,16 @@ def set_create(request):
 		return render(request, 'quiz/dashboard.html' ,{'state':'Could not create set', 'sets': sets, 'number_of_sets': len(sets)})
 
 def get_set(request, set_id):
-	
-	template = loader.get_template('quiz/cards.html')
-	
-	set_cards = Card.objects.filter(set = set_id)
-	#print(set_cards)
-	context = {'SetCards':set_cards}
-	return HttpResponse(template.render(context))
+	return render(request, 'quiz/viewCards.html', { 'SetCards': Card.objects.filter(set = set_id) })
 
 # Get request to display form
 def edit_set_form(request, set_id):
-	return render(request, 'quiz/editSet.html' ,{ 'languages': Language.objects.all(), 'set': Set.objects.get(pk=set_id) })
+	required_set = Set.objects.get(pk=set_id)
+	cards = Card.objects.filter(set = required_set)
+	return render(request, 'quiz/editSet.html' ,{ 'languages': Language.objects.all(), 'set': Set.objects.get(pk=set_id), 'cards': cards })
+
+def set_card_form(request, set_id):
+	return render(request, 'quiz/setCards.html', { 'set_id': set_id })
 
 # Triggered when OK is clicked. Needs set_id as part of get req body
 def edit_set(request):
@@ -157,5 +190,47 @@ def edit_set(request):
 	else:
 		return render(request, 'quiz/dashboard.html' ,{'state':'Could not edit set', 'sets': sets, 'number_of_sets': len(sets)})
 
+def create_card(request):
+	retrieved_user = User.objects.get(username=request.user)
+	sets = Set.objects.filter(user=retrieved_user)
+	if request.POST:
+		set_id = request.POST.get('setId')
+		current_set = Set.objects.get(pk=set_id)
+		request_term = request.POST.get('term')
+		request_definition = request.POST.get('definition')
+		card = Card(
+			set = Set.objects.get(pk=set_id),
+			term = request_term,
+			definition = request_definition,
+			)
+		card.save()
+		return render(request, 'quiz/editSet.html' ,{ 'languages': Language.objects.all(), 'set': current_set, 'cards': Card.objects.filter(set=current_set)})
+
+def delete_card(request, card_id, set_id):
+	card = Card.objects.get(pk=card_id)
+	set = Set.objects.get(pk=set_id)
+	card.delete()
+	return render(request, 'quiz/editSet.html' ,{ 'languages': Language.objects.all(), 'set': set, 'cards': Card.objects.filter(set=set) })
+
+def edit_card_form(request, card_id, set_id):
+	card = Card.objects.get(pk=card_id)
+	set = Set.objects.get(pk=set_id)
+	return render(request, 'quiz/editCardForm.html' ,{ 'languages': Language.objects.all(), 'set': set, 'card': card })
+
+# Triggered when OK is clicked. Needs card_id as part of get req body
+def edit_card(request):
+	retrieved_user = User.objects.get(username=request.user)
+	sets = Set.objects.filter(user=retrieved_user)
+	if request.POST:
+		set_id = request.POST.get('setId')
+		current_set = Set.objects.get(pk=set_id)
+		request_term = request.POST.get('term')
+		request_definition = request.POST.get('definition')
+		card_id = request.POST.get('cardId')
+		card_to_edit = Card.objects.get(pk=card_id)
+		card_to_edit.term = request_term
+		card_to_edit.definition = request_definition
+		card_to_edit.save()
+		return render(request, 'quiz/editSet.html' ,{ 'languages': Language.objects.all(), 'set': current_set, 'cards': Card.objects.filter(set=current_set)})
 
 
