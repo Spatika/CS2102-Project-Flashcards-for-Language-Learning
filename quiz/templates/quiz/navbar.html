@@ -28,8 +28,8 @@
   </form>
   <!-- <a href="#"><span class="glyphicon glyphicon-search "></span></a> -->
   <ul class="nav navbar-nav navbar-right">
-    <li><a href="#" class="navbar-link">Edit Profile <span class="glyphicon glyphicon-edit glyph-style"></span></a></li>
-    <li><a href="#" class="navbar-link">Log Out <span class="glyphicon glyphicon-log-out glyph-style"></a></li>
+    <li><a href={% url 'admin:index'  %} class="navbar-link">Edit Profile <span class="glyphicon glyphicon-edit glyph-style"></span></a></li>
+    <li><a href={% url 'quiz.views.index' %} class="navbar-link">Log Out <span class="glyphicon glyphicon-log-out glyph-style"></a></li>
   </ul>
 </div><!-- /.navbar-collapse -->
 </div><!-- /.container-fluid -->

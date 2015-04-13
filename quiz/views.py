@@ -170,6 +170,7 @@ def set_create(request):
 	except IntegrityError as e:
 		response = render(request, 'quiz/dashboard.html' ,{'msg':'Set already exists'})
 		return response
+
 def get_set(request, set_id):
 	return render(request, 'quiz/viewCards.html', { 'SetCards': Card.objects.filter(set = set_id) })
 
